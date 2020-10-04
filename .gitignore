@@ -1,0 +1,8 @@
+doc/misc/*
+pcap_src/*
+venv/*
+src/__pycache__/*
+scratchpad
+
+.idea/
+*.iws /out/
