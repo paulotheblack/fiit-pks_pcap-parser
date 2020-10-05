@@ -2,6 +2,7 @@ doc/misc/*
 pcap_src/*
 venv/*
 src/__pycache__/*
+src/osi/__pycache__/*
 scratchpad
 
 .idea/
