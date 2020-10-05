@@ -1,4 +1,5 @@
 # represents Data Link Layer
+
 from datetime import datetime
 from .network import *
 
@@ -34,7 +35,7 @@ class Frame:
         self.get_dll()
 
     def __repr__(self):
-        return c.RED + '\n# ------------ #\n' + '#  Frame: ' + str(self.index) + '  #\n' \
+        return c.RED + '\n# ------------ #\n' + '   Frame: ' + str(self.index) + '\n' \
                + '# ------------ #' + c.END + '\n' \
                + 'Timestamp: ' + self.timestamp + '\n' \
                + 'PCAP API Length: ' + str(self.api_len) + '\n' \
@@ -53,7 +54,7 @@ class Frame:
 
     def get_dll(self):
         self.dest_mac, self.src_mac, self.protocol = unpack('! 6s 6s H', self.buffer[:14])
-        self.get_frame_type()
+        self.get_frame_type()# TODO change, no need to use 6s
 
     def get_frame_type(self):
         if self.protocol < 512:
@@ -64,7 +65,6 @@ class Frame:
             self.frame_type = 'Ethernet II'
             self.get_ether_type()
 
-    # ?? create etherII % 802.3
     def get_ether_type(self):
         # if self.protocol == 512:
         #     self.pdu_l = 'XEROX PUP'
@@ -75,17 +75,17 @@ class Frame:
             self.protocol = IPv4(self.buffer[14:])
 
         # elif self.protocol == 2049:
-        #     self.pdu_l = 'X.75 Internet'
+        #     'X.75 Internet'
         # elif self.protocol == 2053:
-        #     self.pdu_l = 'X.25 Level 3'
+        #     'X.25 Level 3'
 
         elif self.protocol == 2054:
             self.protocol = ARP()
 
         # elif self.protocol == 32821:
-        #     self.pdu_l = 'Reverse ARP'
+        #     'Reverse ARP'
         # elif self.protocol == 34525:
-        #     self.pdu_l = 'IPv6'
+        #     'IPv6'
 
         elif self.protocol == 34958:
             self.protocol = StdX()
@@ -114,5 +114,5 @@ class Frame:
             self.frame_type = 'IEEE Std 802.3 LLC'
             self.protocol = c.CYAN + '?!.!?' + c.END
 
-    def get_8023_pdu(self):
-        return
+    # def get_8023_pdu(self):
+    #     return

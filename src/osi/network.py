@@ -1,4 +1,5 @@
 # represents Network Layer
+
 from .transport import *
 
 
@@ -62,7 +63,6 @@ class IPv4:
 
             self.total_len, self.ttl, self.protocol, self.src_ip, self.dest_ip, self.options = \
                 unpack(self.header_struct, self.buffer[:self.header_len])
-            # self.buffer[self.header_len:]
 
             self.opt_type = self.options[0]
             self.opt_len = self.options[1]
@@ -79,13 +79,13 @@ class IPv4:
         elif self.protocol == 2:  # IGMP
             self.protocol = IGMP()
         elif self.protocol == 6:  # TCP
-            self.protocol = TCP()
+            self.protocol = TCP(self.buffer[self.header_len:])
 
         # elif self.protocol == 9:  # IGRP
         #     self.pdu_n = 'IGRP'
 
         elif self.protocol == 17:  # UDP
-            self.protocol = UDP()
+            self.protocol = UDP(self.buffer[self.header_len:])
 
         # elif self.protocol == 47:  # GRE
         #     self.pdu_n = 'GRE'
