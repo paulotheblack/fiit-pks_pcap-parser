@@ -2,7 +2,7 @@ from src.helper import read_pcap, petit_print
 from src.osi.data_link import Frame
 
 # path only for testing purpose
-test_path = 'pcap_src/trace_ip_nad_20_B.pcap'
+test_path = 'pcap_src/trace-26.pcap'
 
 if __name__ == '__main__':
 

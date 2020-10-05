@@ -42,8 +42,8 @@ class IPv4:
             + T0 + 'Header Length: ' + str(self.header_len) + '\n'\
             + T0 + 'Total Length: ' + str(self.total_len) + '\n'\
             + T0 + 'TTL: ' + str(self.ttl) + '\n'\
-            + T0 + 'src_IP: ' + c.GREEN + self.src_ip + c.END + '\n'\
-            + T0 + 'dst_IP: ' + c.GREEN + self.dest_ip + c.END + '\n'\
+            + T0 + 'src_IP: ' + c.GREEN + ipv4_format(self.src_ip) + c.END + '\n'\
+            + T0 + 'dst_IP: ' + c.GREEN + ipv4_format(self.dest_ip) + c.END + '\n'\
             + T0 + 'Options ' + self.options_str() + '\n'\
             + T0 + 'PDU: ' + c.PURPLE + self.pdu + c.END  # CHANGE according to PDU
 
@@ -74,8 +74,6 @@ class IPv4:
             self.total_len, self.ttl, self.protocol, self.src_ip, self.dest_ip = \
                 unpack(self.header_struct, self.buffer[:self.header_len])
 
-        self.dest_ip = ipv4_format(self.dest_ip)
-        self.src_ip = ipv4_format(self.src_ip)
         self.get_pdu()
 
     def get_pdu(self):

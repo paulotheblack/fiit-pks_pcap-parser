@@ -46,8 +46,8 @@ class Frame:
             + 'PCAP API Length: ' + str(self.api_len) + '\n'\
             + 'Physical Length: ' + str(self.phys_len) + '\n'\
             + c.CYAN + self.frame_type + c.END + '\n'\
-            + T0 + 'dst_MAC: ' + c.GREEN + self.dest_mac + c.END + '\n'\
-            + T0 + 'src_MAC: ' + c.GREEN + self.src_mac + c.END + '\n'\
+            + T0 + 'dst_MAC: ' + c.GREEN + mac_format(self.dest_mac) + c.END + '\n'\
+            + T0 + 'src_MAC: ' + c.GREEN + mac_format(self.src_mac) + c.END + '\n'\
             + str(self.pdu) + '\n'
 
     def get_length(self):
@@ -58,19 +58,16 @@ class Frame:
         return physical_len
 
     def get_dll(self):
-        dest_mac, src_mac, self.protocol = unpack('! 6s 6s H', self.buffer[:14])
-        self.dest_mac = mac_format(dest_mac)
-        self.src_mac = mac_format(src_mac)
-
+        self.dest_mac, self.src_mac, self.protocol = unpack('! 6s 6s H', self.buffer[:14])
         self.get_frame_type()
 
     # TODO get frame types correctly Task-1
     def get_frame_type(self):
         if self.protocol < 512:
             self.frame_type = 'IEEE Std 802.3 RAW or LLC or LLC + SNAP'
-            self. protocol = '802.3 length'
+            self. protocol = 'IEEE Std 802.3 LenFiled'
+            self.get_8023_type()
 
-            self.pdu = '802.3 - Nan'
         else:
             self.frame_type = 'Ethernet II'
             self.get_ether_type()
@@ -83,7 +80,6 @@ class Frame:
             self.pdu = 'PUP Addr Trans'
 
         elif self.protocol == 2048:
-            self.ether_type = 'IPv4'
             self.pdu = IPv4(self.buffer[14:])
 
         elif self.protocol == 2049:
@@ -108,3 +104,20 @@ class Frame:
             self.pdu = 'Loopback'
         else:
             self.pdu = 'Unknown --> '
+
+    def get_8023_type(self):
+        fff = unpack('!14x B', self.buffer[:15])
+        ff = '{:0x}'.format(fff[0]).upper()
+
+        if ff == 'FF':
+            self.frame_type = 'IEEE Std 802.3 RAW'
+            self.pdu = c.CYAN + 'IPXX' + c.END
+        elif ff == 'AA':
+            self.frame_type = 'IEEE Std 802.3 LLC + SNAP'
+            self.pdu = c.CYAN + 'SNAP' + c.END
+        else:
+            self.frame_type = 'IEEE Std 802.3 LLC'
+            self.pdu = c.CYAN + '?\!/?' + c.END
+
+    def get_8023_pdu(self):
+        return
