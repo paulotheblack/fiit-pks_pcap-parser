@@ -6,9 +6,19 @@ test_path = 'pcap_src/trace-26.pcap'
 
 if __name__ == '__main__':
 
-    pcap_data, buffer_copy = read_pcap(test_path)
+    pcap_data = read_pcap(test_path)
+
+    storage = []
 
     for fr in pcap_data:
-        x = Frame(fr['index'], fr['ts'], fr['buf'])
-        print(x)
-        petit_print(x.buffer)
+        dump = Frame(fr['index'], fr['ts'], fr['buf'])
+        print(dump)
+        petit_print(dump.buffer)
+
+        storage.append(dump)
+
+    """
+    TODO 
+    Zoznam IP adries vsetych prijmajucich uzlov
+    IP adresu uzla, kt. sumarne prijal najvacsi pocet paketov a ich pocet (iba IPv4)
+    """

@@ -1,7 +1,5 @@
-from struct import unpack
-from src.color import Color as c
-
-T0 = '    '
+# represents Network Layer
+from .transport import *
 
 
 def ipv4_format(raw):
@@ -11,7 +9,6 @@ def ipv4_format(raw):
 class IPv4:
     """
     not covering:   Type Of Service, ID, Flags, Fragment Offset, Header Checksum
-                    ID: used when 2 and more Fragments are created (MTU > 1300)
     """
 
     name = 'IPv4'
@@ -33,25 +30,25 @@ class IPv4:
         self.opt_len = None
         self.opt_info = None
 
-        self.pdu = None
+        self.pdu_n = None # TODO change
 
         self.parse()
 
     def __repr__(self):
-        return c.CYAN + self.name + c.END + '\n'\
-            + T0 + 'Header Length: ' + str(self.header_len) + '\n'\
-            + T0 + 'Total Length: ' + str(self.total_len) + '\n'\
-            + T0 + 'TTL: ' + str(self.ttl) + '\n'\
-            + T0 + 'src_IP: ' + c.GREEN + ipv4_format(self.src_ip) + c.END + '\n'\
-            + T0 + 'dst_IP: ' + c.GREEN + ipv4_format(self.dest_ip) + c.END + '\n'\
-            + T0 + 'Options ' + self.options_str() + '\n'\
-            + T0 + 'PDU: ' + c.PURPLE + self.pdu + c.END  # CHANGE according to PDU
+        return c.CYAN + self.name + c.END + '\n' \
+               + T0 + 'Header Length: ' + str(self.header_len) + '\n' \
+               + T0 + 'Total Length: ' + str(self.total_len) + '\n' \
+               + T0 + 'TTL: ' + str(self.ttl) + '\n' \
+               + T0 + 'src_IP: ' + c.GREEN + ipv4_format(self.src_ip) + c.END + '\n' \
+               + T0 + 'dst_IP: ' + c.GREEN + ipv4_format(self.dest_ip) + c.END + '\n' \
+               + T0 + 'Options ' + self.options_str() + '\n' \
+               + 'Transport Protocol: ' + str(self.protocol)  # CHANGE according to PDU
 
     def options_str(self):
         if self.options is not None:
             return 'Type: ' + str(self.opt_type) + '\n'\
                 + T0 + 'Options Length: ' + str(self.opt_len) + '\n'\
-                + T0 + 'Info: ' + str(self.opt_info) + '\n'
+                + T0 + 'Info: ' + str(self.opt_info)
         else:
             return 'Nan'
 
@@ -74,37 +71,78 @@ class IPv4:
             self.total_len, self.ttl, self.protocol, self.src_ip, self.dest_ip = \
                 unpack(self.header_struct, self.buffer[:self.header_len])
 
-        self.get_pdu()
+        self.get_prtcl()
 
-    def get_pdu(self):
+    def get_prtcl(self):
         if self.protocol == 1:  # ICMP
-            self.pdu = 'ICMP'
+            self.protocol = ICMP()
         elif self.protocol == 2:  # IGMP
-            self.pdu = 'IGMP'
+            self.protocol = IGMP()
         elif self.protocol == 6:  # TCP
-            self.pdu = 'TCP'
-        elif self.protocol == 9:  # IGRP
-            self.pdu = 'IGRP'
+            self.protocol = TCP()
+
+        # elif self.protocol == 9:  # IGRP
+        #     self.pdu_n = 'IGRP'
+
         elif self.protocol == 17:  # UDP
-            self.pdu = 'UDP'
-        elif self.protocol == 47:  # GRE
-            self.pdu = 'GRE'
-        elif self.protocol == 50:  # ESP
-            self.pdu = 'ESP'
-        elif self.protocol == 51:  # AH
-            self.pdu = 'AH'
-        elif self.protocol == 57:  # AH
-            self.pdu = 'SKIP'
-        elif self.protocol == 88:  # EIGRP
-            self.pdu = 'EIGRP'
-        elif self.protocol == 89:  # OSPF
-            self.pdu = 'OSPF'
-        elif self.protocol == 115:  # L2TP
-            self.pdu = 'L2TP'
+            self.protocol = UDP()
+
+        # elif self.protocol == 47:  # GRE
+        #     self.pdu_n = 'GRE'
+        # elif self.protocol == 50:  # ESP
+        #     self.pdu_n = 'ESP'
+        # elif self.protocol == 51:  # AH
+        #     self.pdu_n = 'AH'
+        # elif self.protocol == 57:  # AH
+        #     self.pdu_n = 'SKIP'
+        # elif self.protocol == 88:  # EIGRP
+        #     self.pdu_n = 'EIGRP'
+        # elif self.protocol == 89:  # OSPF
+        #     self.pdu_n = 'OSPF'
+        # elif self.protocol == 115:  # L2TP
+        #     self.pdu_n = 'L2TP'
         else:
-            self.pdu = 'Unknown'
+            self.pdu_n = 'Unknown'
 
 
-"""
-    Add ICMP
-"""
+# TODO -> <- communication
+class ARP:
+    name = 'ARP'
+
+    def __repr__(self):
+        return c.CYAN + self.name + c.END + '\n'
+
+
+class Loopback:
+    name = 'Loopback'
+
+    def __repr__(self):
+        return c.CYAN + self.name + c.END + '\n'
+
+
+class StdX:
+    name = 'IEEE Std 802.1X'
+
+    def __repr__(self):
+        return c.CYAN + self.name + c.END + '\n'
+
+
+class StdSTag:
+    name = 'IEEE Std 802.1Q (S-Tag)'
+
+    def __repr__(self):
+        return c.CYAN + self.name + c.END + '\n'
+
+
+class StdI:
+    name = 'IEEE Std 802.11i (pre-Auth)'
+
+    def __repr__(self):
+        return c.CYAN + self.name + c.END + '\n'
+
+
+class StdAB:
+    name = 'IEEE Std 802.1AB (LLDP)'
+
+    def __repr__(self):
+        return c.CYAN + self.name + c.END + '\n'

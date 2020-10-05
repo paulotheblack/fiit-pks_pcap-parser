@@ -13,7 +13,6 @@ def read_pcap(path):
     f = open(path, 'rb')
     src = pcap.Reader(f)
     data = []
-    buffer_cpy = []
 
     for index, [ts, buf] in enumerate(src):
         # List of dictionaries
@@ -22,10 +21,9 @@ def read_pcap(path):
             'ts': ts,
             'buf': buf
         })
-        buffer_cpy.append(buf)
 
     f.close()
-    return data, buffer_cpy
+    return data
 
 
 def petit_print(buffer):

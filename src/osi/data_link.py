@@ -1,12 +1,6 @@
-# represents Data Link Layer and its PDUs
+# represents Data Link Layer
 from datetime import datetime
-from struct import unpack
-
-from src.color import Color as c
-
-from .network import IPv4
-
-T0 = '    '
+from .network import *
 
 
 def get_epoch(ts):
@@ -34,21 +28,21 @@ class Frame:
         self.ether_type = None
 
         # Object of encapsulated packet
-        self.pdu = None
+        # self.pdu_l = None
+
         # Parsing
         self.get_dll()
 
-    # TODO Frame formatted print
     def __repr__(self):
-        return c.RED + '\n# ------------ #\n' + '#  Frame: ' + str(self.index) + '  #\n'\
-            + '# ------------ #' + c.END + '\n'\
-            + 'Timestamp: ' + self.timestamp + '\n'\
-            + 'PCAP API Length: ' + str(self.api_len) + '\n'\
-            + 'Physical Length: ' + str(self.phys_len) + '\n'\
-            + c.CYAN + self.frame_type + c.END + '\n'\
-            + T0 + 'dst_MAC: ' + c.GREEN + mac_format(self.dest_mac) + c.END + '\n'\
-            + T0 + 'src_MAC: ' + c.GREEN + mac_format(self.src_mac) + c.END + '\n'\
-            + str(self.pdu) + '\n'
+        return c.RED + '\n# ------------ #\n' + '#  Frame: ' + str(self.index) + '  #\n' \
+               + '# ------------ #' + c.END + '\n' \
+               + 'Timestamp: ' + self.timestamp + '\n' \
+               + 'PCAP API Length: ' + str(self.api_len) + '\n' \
+               + 'Physical Length: ' + str(self.phys_len) + '\n' \
+               + 'DLL Protocol: ' + c.CYAN + self.frame_type + c.END + '\n' \
+               + T0 + 'dst_MAC: ' + c.GREEN + mac_format(self.dest_mac) + c.END + '\n' \
+               + T0 + 'src_MAC: ' + c.GREEN + mac_format(self.src_mac) + c.END + '\n' \
+               + 'Network Protocol: ' + str(self.protocol) + '\n'
 
     def get_length(self):
         if self.api_len < 64:
@@ -61,11 +55,9 @@ class Frame:
         self.dest_mac, self.src_mac, self.protocol = unpack('! 6s 6s H', self.buffer[:14])
         self.get_frame_type()
 
-    # TODO get frame types correctly Task-1
     def get_frame_type(self):
         if self.protocol < 512:
             self.frame_type = 'IEEE Std 802.3 RAW or LLC or LLC + SNAP'
-            self. protocol = 'IEEE Std 802.3 LenFiled'
             self.get_8023_type()
 
         else:
@@ -74,50 +66,53 @@ class Frame:
 
     # ?? create etherII % 802.3
     def get_ether_type(self):
-        if self.protocol == 512:
-            self.pdu = 'XEROX PUP'
-        elif self.protocol == 513:
-            self.pdu = 'PUP Addr Trans'
+        # if self.protocol == 512:
+        #     self.pdu_l = 'XEROX PUP'
+        # elif self.protocol == 513:
+        #     self.pdu_l = 'PUP Addr Trans'
 
-        elif self.protocol == 2048:
-            self.pdu = IPv4(self.buffer[14:])
+        if self.protocol == 2048:
+            self.protocol = IPv4(self.buffer[14:])
 
-        elif self.protocol == 2049:
-            self.pdu = 'X.75 Internet'
-        elif self.protocol == 2053:
-            self.pdu = 'X.25 Level 3'
+        # elif self.protocol == 2049:
+        #     self.pdu_l = 'X.75 Internet'
+        # elif self.protocol == 2053:
+        #     self.pdu_l = 'X.25 Level 3'
+
         elif self.protocol == 2054:
-            self.pdu = 'ARP'  # TODO
-        elif self.protocol == 32821:
-            self.pdu = 'Reverse ARP'
-        elif self.protocol == 34525:
-            self.pdu = 'IPv6'  # TODO
+            self.protocol = ARP()
+
+        # elif self.protocol == 32821:
+        #     self.pdu_l = 'Reverse ARP'
+        # elif self.protocol == 34525:
+        #     self.pdu_l = 'IPv6'
+
         elif self.protocol == 34958:
-            self.pdu = 'IEEE Std 802.1X'
+            self.protocol = StdX()
         elif self.protocol == 34984:
-            self.pdu = 'IEEE Std 802.1Q (S-Tag)'
+            self.protocol = StdSTag()
         elif self.protocol == 35015:
-            self.pdu = 'IEEE Std 802.11i (pre-Auth)'
+            self.protocol = StdI()
         elif self.protocol == 35020:
-            self.pdu = 'IEEE Std 802.1AB (LLDP)'
+            self.protocol = StdAB()
         elif self.protocol == 36864:
-            self.pdu = 'Loopback'
+            self.protocol = Loopback()
         else:
-            self.pdu = 'Unknown --> '
+            self.protocol = 'Unknown --> ' + str(self.protocol)
 
     def get_8023_type(self):
-        fff = unpack('!14x B', self.buffer[:15])
+        fff = unpack('! B', self.buffer[14:15])
         ff = '{:0x}'.format(fff[0]).upper()
 
         if ff == 'FF':
             self.frame_type = 'IEEE Std 802.3 RAW'
-            self.pdu = c.CYAN + 'IPXX' + c.END
+            self.protocol = c.CYAN + 'IPXX' + c.END
         elif ff == 'AA':
             self.frame_type = 'IEEE Std 802.3 LLC + SNAP'
-            self.pdu = c.CYAN + 'SNAP' + c.END
+            self.protocol = c.CYAN + 'SNAP' + c.END
         else:
             self.frame_type = 'IEEE Std 802.3 LLC'
-            self.pdu = c.CYAN + '?\!/?' + c.END
+            self.protocol = c.CYAN + '?!.!?' + c.END
 
     def get_8023_pdu(self):
         return
