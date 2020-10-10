@@ -30,7 +30,7 @@ def parse_args():
 
     ap.add_argument('-o', help='stdout (s), file (f)')
     ap.add_argument('-i', help='path to pcap file, RELATIVE to main.py or ABSOLUTE from root')
-    ap.add_argument('-p', help='protocols to parse from file')
+    ap.add_argument('-p', help='protocols to parse from file NOT IMPLEMENTED')
 
     args = ap.parse_args()
     return vars(args)

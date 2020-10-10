@@ -1,5 +1,6 @@
-from src.helper import read_pcap, petit_print, parse_args
+from src.misc import read_pcap, petit_print, parse_args
 from src.osi.data_link import Frame
+from src.color import Color
 import sys
 
 # path only for testing purpose
@@ -12,6 +13,10 @@ if __name__ == '__main__':
     if args['o'] == 'f':  # output selection
         f = open('stdout_test', 'w')
         sys.stdout = f
+        # TODO solve src.color Color issue when printing to file
+
+    if not args['i']:  # if no input file was selected
+        args['i'] = 'pcap_src/trace_ip_nad_20_B.pcap'
 
     pcap_data = read_pcap(args['i'])
     dump = []
