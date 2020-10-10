@@ -1,9 +1,9 @@
 **Python 3.8**
 
-Dependencies:
-- dkpt (pip install dkpt) 
-    
-    `src = pcap.Reader(f)`
+PCAP Reader used  
+[dkpt](https://pypi.org/project/dpkt/) 
+`pcap = dpkt.pcap.Reader(f)` 
+
     
 ```
 usage: PROG [-h] [-o O] [-i I] [-p P]
