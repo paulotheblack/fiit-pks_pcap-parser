@@ -4,16 +4,6 @@ import argparse
 
 
 def parse_args():
-    # ap = argparse.ArgumentParser(
-    #     prog='PCAP Analyzer Alfa',
-    #     description='PCAP dump analyzer <--> PKS assigment 1',
-    #     formatter_class=argparse.RawDescriptionHelpFormatter,
-    #     epilog=textwrap.dedent('----------------------------------------------\n'
-    #                            'Author --> \n'
-    #                            'STU-FIIT: xpaulovicm1 \n'
-    #                            'Github: paulotheblack \n'
-    #                            'https://github.com/paulotheblack/pcap_parser')
-    # )
 
     ap = argparse.ArgumentParser(
         prog='PROG',

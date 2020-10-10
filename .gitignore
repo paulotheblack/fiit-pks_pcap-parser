@@ -1,10 +1,10 @@
 doc/misc/*
 pcap_src/*
-venv/*
-src/__pycache__/*
-src/osi/__pycache__/*
 scratchpad
 stdout_test
 
+venv/*
+src/__pycache__/*
+src/osi/__pycache__/*
 .idea/
 *.iws /out/

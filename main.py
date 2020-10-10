@@ -1,6 +1,6 @@
 from src.misc import read_pcap, petit_print, parse_args
 from src.osi.data_link import Frame
-from src.color import Color
+from src.color import *
 import sys
 
 # path only for testing purpose
@@ -13,13 +13,15 @@ if __name__ == '__main__':
     if args['o'] == 'f':  # output selection
         f = open('stdout_test', 'w')
         sys.stdout = f
-        # TODO solve src.color Color issue when printing to file
+        Color.disabled()
+    else:
+        Color.enabled()
 
     if not args['i']:  # if no input file was selected
         args['i'] = 'pcap_src/trace_ip_nad_20_B.pcap'
 
     pcap_data = read_pcap(args['i'])
-    dump = []
+    dump = []  # for future data manipulation
 
     for i, fr in enumerate(pcap_data):
         dump.append(Frame(fr['index'], fr['ts'], fr['buf']))
@@ -27,8 +29,9 @@ if __name__ == '__main__':
         petit_print(dump[i].buffer)
 
     #
-    # TODO najcastesia ip_addr (use dict, key=addr val=visits)
+    # TODO najcastesia ip_addr {key=addr, value=visits}
     #
 
     if args['o'] == 'f':
         f.close()
+        sys.stdout = sys.__stdout__
