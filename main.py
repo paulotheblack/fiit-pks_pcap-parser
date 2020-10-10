@@ -1,23 +1,29 @@
-from src.helper import read_pcap, petit_print
+from src.helper import read_pcap, petit_print, parse_args
 from src.osi.data_link import Frame
+import sys
 
 # path only for testing purpose
-test_path = 'pcap_src/trace_ip_nad_20_B.pcap'
+# test_path = 'pcap_src/trace_ip_nad_20_B.pcap'
 
 if __name__ == '__main__':
 
-    pcap_data = read_pcap(test_path)
-    # storage = []
+    args = parse_args()
 
-    for fr in pcap_data:
-        dump = Frame(fr['index'], fr['ts'], fr['buf'])
-        print(dump)
-        petit_print(dump.buffer)
+    if args['o'] == 'f':  # output selection
+        f = open('stdout_test', 'w')
+        sys.stdout = f
 
-        # storage.append(dump)
+    pcap_data = read_pcap(args['i'])
+    dump = []
 
-    """
-    TODO 
-    Zoznam IP adries vsetych prijmajucich uzlov
-    IP adresu uzla, kt. sumarne prijal najvacsi pocet paketov a ich pocet (iba IPv4)
-    """
+    for i, fr in enumerate(pcap_data):
+        dump.append(Frame(fr['index'], fr['ts'], fr['buf']))
+        print(dump[i])
+        petit_print(dump[i].buffer)
+
+    #
+    # TODO najcastesia ip_addr (use dict, key=addr val=visits)
+    #
+
+    if args['o'] == 'f':
+        f.close()

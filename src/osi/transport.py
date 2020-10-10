@@ -3,8 +3,6 @@
 from struct import unpack
 from src.color import Color as c
 
-T0 = '\t'
-
 
 class ICMP:
     name = 'ICMP'
@@ -28,8 +26,9 @@ class TCP:
 
     name = 'TCP'
 
-    # if src or dest_port == 80 HTTP data
-    # elif == 443 HTTPs data
+    # ports to analyze:
+    # 80 == HTTP data
+    # 443 == HTTPs data
     # 21 == FTP
     # 22 == SSH
     def __init__(self, buffer):
@@ -46,11 +45,11 @@ class TCP:
 
     def __repr__(self):
         return c.CYAN + self.name + c.END + '\n'\
-            + T0 + 'src_Port: ' + c.GREEN + str(self.src_port) + c.END + '\n'\
-            + T0 + 'dst_Port: ' + c.GREEN + str(self.dest_port) + c.END + '\n'\
-            + T0 + 'Seq No.: ' + str(self.seq_num) + '\n'\
-            + T0 + 'ACK No.: ' + str(self.ack_num) + '\n'\
-            + T0 + 'Flags: ' + str(self.flags)
+            + '\t' + 'src_Port: ' + c.GREEN + str(self.src_port) + c.END + '\n'\
+            + '\t' + 'dst_Port: ' + c.GREEN + str(self.dest_port) + c.END + '\n'\
+            + '\t' + 'Seq No.: ' + str(self.seq_num) + '\n'\
+            + '\t' + 'ACK No.: ' + str(self.ack_num) + '\n'\
+            + '\t' + 'Flags: ' + str(self.flags)
 
     def parse(self):
         self.src_port, self.dest_port, self.seq_num, self.ack_num, self.flags\
@@ -62,6 +61,7 @@ class UDP:
 
     name = 'UDP'
 
+    # ports to analyze:
     def __init__(self, buffer):
         self.src_port = None
         self.dest_port = None
@@ -73,9 +73,10 @@ class UDP:
 
     def __repr__(self):
         return c.CYAN + self.name + c.END + '\n'\
-            + T0 + 'src_Port: ' + c.GREEN + str(self.src_port) + c.END + '\n'\
-            + T0 + 'dst_Port: ' + c.GREEN + str(self.dest_port) + c.END + '\n'\
-            + T0 + 'Length: ' + str(self.len)
+            + '\t' + 'src_Port: ' + c.GREEN + str(self.src_port) + c.END + '\n'\
+            + '\t' + 'dst_Port: ' + c.GREEN + str(self.dest_port) + c.END + '\n'\
+            + '\t' + 'Length: ' + str(self.len)
 
+    # TODO ports are stored as int values ... no-conversion pls
     def parse(self):
         self.src_port, self.dest_port, self.len = unpack('!H H H 2x', self.buffer[:8])

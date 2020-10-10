@@ -4,6 +4,7 @@ venv/*
 src/__pycache__/*
 src/osi/__pycache__/*
 scratchpad
+stdout_test
 
 .idea/
 *.iws /out/

@@ -11,7 +11,6 @@ class IPv4:
     """
     not covering:   Type Of Service, ID, Flags, Fragment Offset, Header Checksum
     """
-
     name = 'IPv4'
 
     def __init__(self, buffer):
@@ -19,10 +18,9 @@ class IPv4:
 
         self.version = None
         self.header_len = None
-        self.header_struct = '! 3x B 4x B B 2x 4s 4s'
         self.total_len = None
         self.ttl = None
-        self.protocol = None
+        self.trans_protocol = None
         self.src_ip = None
         self.dest_ip = None
 
@@ -31,25 +29,24 @@ class IPv4:
         self.opt_len = None
         self.opt_info = None
 
-        self.pdu_n = None # TODO change
-
+        self.header_struct = '! 3x B 4x B B 2x 4s 4s'
         self.parse()
 
     def __repr__(self):
         return c.CYAN + self.name + c.END + '\n' \
-               + T0 + 'Header Length: ' + str(self.header_len) + '\n' \
-               + T0 + 'Total Length: ' + str(self.total_len) + '\n' \
-               + T0 + 'TTL: ' + str(self.ttl) + '\n' \
-               + T0 + 'src_IP: ' + c.GREEN + ipv4_format(self.src_ip) + c.END + '\n' \
-               + T0 + 'dst_IP: ' + c.GREEN + ipv4_format(self.dest_ip) + c.END + '\n' \
-               + T0 + 'Options ' + self.options_str() + '\n' \
-               + 'Transport Protocol: ' + str(self.protocol)  # CHANGE according to PDU
+               + '\t' + 'Header Length: ' + str(self.header_len) + '\n' \
+               + '\t' + 'Total Length: ' + str(self.total_len) + '\n' \
+               + '\t' + 'TTL: ' + str(self.ttl) + '\n' \
+               + '\t' + 'src_IP: ' + c.GREEN + ipv4_format(self.src_ip) + c.END + '\n' \
+               + '\t' + 'dst_IP: ' + c.GREEN + ipv4_format(self.dest_ip) + c.END + '\n' \
+               + '\t' + 'Options ' + self.get_options_str() + '\n' \
+               + 'Transport Protocol: ' + str(self.trans_protocol)
 
-    def options_str(self):
+    def get_options_str(self):
         if self.options is not None:
             return 'Type: ' + str(self.opt_type) + '\n'\
-                + T0 + 'Options Length: ' + str(self.opt_len) + '\n'\
-                + T0 + 'Info: ' + str(self.opt_info)
+                + '\t' + 'Options Length: ' + str(self.opt_len) + '\n'\
+                + '\t' + 'Info: ' + str(self.opt_info)
         else:
             return 'Nan'
 
@@ -61,51 +58,51 @@ class IPv4:
             bts = str(self.header_len - 20)
             self.header_struct = self.header_struct + ' ' + bts + 's'
 
-            self.total_len, self.ttl, self.protocol, self.src_ip, self.dest_ip, self.options = \
+            self.total_len, self.ttl, self.trans_protocol, self.src_ip, self.dest_ip, self.options = \
                 unpack(self.header_struct, self.buffer[:self.header_len])
 
             self.opt_type = self.options[0]
             self.opt_len = self.options[1]
             self.opt_info = self.options[2:].hex().upper()
         else:
-            self.total_len, self.ttl, self.protocol, self.src_ip, self.dest_ip = \
+            self.total_len, self.ttl, self.trans_protocol, self.src_ip, self.dest_ip = \
                 unpack(self.header_struct, self.buffer[:self.header_len])
 
         self.get_prtcl()
 
     def get_prtcl(self):
-        if self.protocol == 1:  # ICMP
-            self.protocol = ICMP()
-        elif self.protocol == 2:  # IGMP
-            self.protocol = IGMP()
-        elif self.protocol == 6:  # TCP
-            self.protocol = TCP(self.buffer[self.header_len:])
+        if self.trans_protocol == 1:  # ICMP
+            self.trans_protocol = ICMP()
+        elif self.trans_protocol == 2:  # IGMP
+            self.trans_protocol = IGMP()
+        elif self.trans_protocol == 6:  # TCP
+            self.trans_protocol = TCP(self.buffer[self.header_len:])
 
         # elif self.protocol == 9:  # IGRP
-        #     self.pdu_n = 'IGRP'
+        #     self.protocol = 'IGRP'
 
-        elif self.protocol == 17:  # UDP
-            self.protocol = UDP(self.buffer[self.header_len:])
+        elif self.trans_protocol == 17:  # UDP
+            self.trans_protocol = UDP(self.buffer[self.header_len:])
 
         # elif self.protocol == 47:  # GRE
-        #     self.pdu_n = 'GRE'
+        #     self.protocol = 'GRE'
         # elif self.protocol == 50:  # ESP
-        #     self.pdu_n = 'ESP'
+        #     self.protocol = 'ESP'
         # elif self.protocol == 51:  # AH
-        #     self.pdu_n = 'AH'
+        #     self.protocol = 'AH'
         # elif self.protocol == 57:  # AH
-        #     self.pdu_n = 'SKIP'
+        #     self.protocol = 'SKIP'
         # elif self.protocol == 88:  # EIGRP
-        #     self.pdu_n = 'EIGRP'
+        #     self.protocol = 'EIGRP'
         # elif self.protocol == 89:  # OSPF
-        #     self.pdu_n = 'OSPF'
+        #     self.protocol = 'OSPF'
         # elif self.protocol == 115:  # L2TP
-        #     self.pdu_n = 'L2TP'
+        #     self.protocol = 'L2TP'
         else:
-            self.pdu_n = 'Unknown'
+            self.trans_protocol = 'Unknown'
 
 
-# TODO -> <- communication
+# TODO -> <- communication:: TASK 4
 class ARP:
     name = 'ARP'
 
