@@ -81,7 +81,7 @@ class IPv4:
                 elif ip['name'] == 'TCP':
                     self.trans_protocol = TCP(self.buffer[self.header_len:], self.consts)
                 elif ip['name'] == 'UDP':
-                    self.trans_protocol = UDP(self.buffer[self.header_len:])
+                    self.trans_protocol = UDP(self.buffer[self.header_len:], self.consts)
                 else:
                     self.trans_protocol = 'Unknown: ' + str(self.trans_protocol)
 

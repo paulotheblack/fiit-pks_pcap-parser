@@ -41,6 +41,7 @@ class TCP:
         self.ack_num = None
         self.data_off = None
         self.flags = None
+        self.data_type = None
         # TODO implement Flags
 
 
@@ -52,12 +53,25 @@ class TCP:
             + '\t' + 'dst_Port: ' + c.GREEN + str(self.dest_port) + c.END + '\n'\
             + '\t' + 'Seq No.: ' + str(self.seq_num) + '\n'\
             + '\t' + 'ACK No.: ' + str(self.ack_num) + '\n'\
-            + '\t' + 'Flags: ' + str(self.flags)
+            + '\t' + 'Flags: ' + str(self.flags) + '\n'\
+            + '\t' + 'Data type: ' + c.CYAN + str(self.data_type) + c.END
 
     def parse(self):
         self.src_port, self.dest_port, self.seq_num, self.ack_num, self.flags\
             = unpack('!H H L L H', self.buffer[:14])  # last == off_res_flags
-        # TODO parse off, res, flags
+
+        self.get_data_type()
+
+    def get_data_type(self):
+        for prtcl in self.consts['tcp']:
+            if prtcl['port'] == self.src_port:
+                self.data_type = prtcl['name']
+
+            elif prtcl['port'] == self.dest_port:
+                self.data_type = prtcl['name']
+
+            elif prtcl['port'] is not self.src_port or self.dest_port:
+                self.data_type = 'Unknown'
 
 
 class UDP:
@@ -73,6 +87,7 @@ class UDP:
         self.dest_port = None
         self.len = None  # means header + payload
         self.payload = None
+        self.data_type = None
 
         self.parse()
 
@@ -80,8 +95,21 @@ class UDP:
         return c.CYAN + self.name + c.END + '\n'\
             + '\t' + 'src_Port: ' + c.GREEN + str(self.src_port) + c.END + '\n'\
             + '\t' + 'dst_Port: ' + c.GREEN + str(self.dest_port) + c.END + '\n'\
-            + '\t' + 'Length: ' + str(self.len)
+            + '\t' + 'Length: ' + str(self.len) + '\n'\
+            + '\t' + 'Data type: ' + c.CYAN + str(self.data_type) + c.END
 
     # TODO ports are stored as int values ... no-conversion pls
     def parse(self):
         self.src_port, self.dest_port, self.len = unpack('!H H H 2x', self.buffer[:8])
+        self.get_data_type()
+
+    def get_data_type(self):
+        for prtcl in self.consts['udp']:
+            if prtcl['port'] == self.src_port:
+                self.data_type = prtcl['name']
+
+            elif prtcl['port'] == self.dest_port:
+                self.data_type = prtcl['name']
+
+            elif prtcl['port'] is not self.src_port or self.dest_port:
+                self.data_type = 'Unknown'

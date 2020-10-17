@@ -12,15 +12,17 @@ ethertype:
   - name: Loopback
     addr: 0x9000
 
-lsap:
+std:
   - name: STP
     addr: 0x42
 
-  - name: SNAP
-    addr: 0xaa
+  - name: IEEE Std 802.3 LLC
+    addr: AA
+    net: SNAP
 
-  - name: IPX
-    addr: 0xe0
+  - name: IEEE Std 802.3 RAW
+    addr: FF
+    net: IPXX
 
 ip:
   - name: ICMP
@@ -41,18 +43,26 @@ ip:
 
 tcp:
   - name: SSH
-    addr: 0x0015
-    addr_dec: 22
+    port: 22
 
   - name: HTTP
-    addr: 0x0050
-    addr_dec: 80
+    port: 80
+
+  - name: HTTPS(SSL)
+    port: 443
+
+  - name: TELNET
+    port: 23
+
+  - name: FTP-DATA
+    port: 20
+
+  - name: FTP-CONTROL
+    port: 21
 
 udp:
   - name: DNS
-    addr: 0x0035
-    addr_dec: 53
+    port: 53
 
   - name: TFTP
-    addr: 0x0045
-    addr_dec: 69
+    port: 69

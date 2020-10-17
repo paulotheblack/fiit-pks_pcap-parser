@@ -76,14 +76,12 @@ class Frame:
 
     def get_8023_type(self):
         fff = unpack('! B', self.buffer[14:15])
-        ff = '{:0x}'.format(fff[0]).upper()
+        type = '{:0x}'.format(fff[0]).upper()
 
-        if ff == 'FF':
-            self.frame_type = 'IEEE Std 802.3 RAW'
-            self.net_protocol = c.CYAN + 'IPXX' + c.END
-        elif ff == 'AA':
-            self.frame_type = 'IEEE Std 802.3 LLC + SNAP'
-            self.net_protocol = c.CYAN + 'SNAP' + c.END
-        else:
-            self.frame_type = 'IEEE Std 802.3 LLC'
-            self.net_protocol = c.CYAN + 'IDK' + c.END
+        for std in self.consts['std']:
+            if std['addr'] == type:
+                self.frame_type = std['name']
+                self.net_protocol = c.CYAN + std['net'] + c.END
+            else:
+                self.frame_type = 'IEEE Std 802.3 LLC'
+                self.net_protocol = c.CYAN + 'IDK' + c.END

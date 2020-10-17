@@ -7,7 +7,6 @@ import sys
 if __name__ == '__main__':
 
     # TODO add comments whole code
-
     args = parse_args()
 
     if args['o'] == 'f':  # output selection
@@ -25,7 +24,7 @@ if __name__ == '__main__':
     dump = []  # for future data manipulation
 
     consts = get_setup('src/analyse.yaml')
-    [print(i) for i in consts['ethertype']]
+    # [print(i) for i in consts['ethertype']]
 
     for i, fr in enumerate(pcap_data):
         dump.append(Frame(fr['index'], fr['ts'], fr['buf'], consts))
