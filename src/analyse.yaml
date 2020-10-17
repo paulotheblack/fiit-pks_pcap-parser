@@ -9,6 +9,9 @@ Ethertype:
   - name: IPv6
     addr: 0x86DD
 
+  - name: IEEE Std 802.1AB (LLDP)
+    addr: 0x88cc
+
   - name: Loopback
     addr: 0x9000
 

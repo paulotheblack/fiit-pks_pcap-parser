@@ -172,10 +172,3 @@ class StdI:
 
     def __repr__(self):
         return c.CYAN + self.name + c.END + '\n'
-
-
-class StdAB:
-    name = 'IEEE Std 802.1AB (LLDP)'
-
-    def __repr__(self):
-        return c.CYAN + self.name + c.END + '\n'

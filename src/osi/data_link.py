@@ -61,15 +61,10 @@ class Frame:
                     self.net_protocol = IPv4(self.buffer[14:], self.consts)
                 elif et['name'] == 'ARP':
                     self.net_protocol = ARP(self.buffer[14:], self.consts)
-                elif et['name'] == 'IPv6':
-                    self.net_protocol = et['name']  # TODO IPv6 Processing
-                elif et['name'] == 'Loopback':
-                    self.net_protocol = Loopback()
-
                 else:
-                    self.net_protocol = 'Please process: ' + str(self.net_protocol)
+                    self.net_protocol = c.RED + et['name'] + c.END
 
-    def get_8023_type(self):
+    def get_8023_type(self):  # TODO
         ff = unpack('! B', self.buffer[14:15])
         std_type = '{:0x}'.format(ff[0]).upper()
 
@@ -77,6 +72,7 @@ class Frame:
             if std['addr'] == std_type:
                 self.frame_type = std['name']
                 self.net_protocol = c.CYAN + std['net'] + c.END
+                # If SNAP --> get_ethertype of SNAP
             else:
                 self.frame_type = 'IEEE Std 802.3 LLC'
                 self.net_protocol = c.CYAN + 'IDK' + c.END
