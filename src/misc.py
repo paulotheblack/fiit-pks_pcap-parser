@@ -6,11 +6,11 @@ import yaml
 
 def parse_args():
     ap = argparse.ArgumentParser(
-        prog='PROG',
+        prog='PCAP Analyzer',
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description=textwrap.dedent('''\
             # ----------------------------------------------- #
-            #   PCAP Analyzer, PKS assigment 1. v0.1          #
+            #   PCAP Analyzer, PKS assigment 1. v0.5          #
             #       Author:     Michal Paulovic               #
             #       STU-FIIT:   xpaulovicm1                   #
             #       Github:     paulotheblack                 #
@@ -20,7 +20,8 @@ def parse_args():
 
     ap.add_argument('-o', help='stdout (s), file (f)')
     ap.add_argument('-i', help='path to pcap file, RELATIVE to main.py or ABSOLUTE from root')
-    ap.add_argument('-p', help='protocols to parse from file NOT IMPLEMENTED')
+    # TODO yaml path
+    ap.add_argument('-p', help=' YAML PATH ')
 
     args = ap.parse_args()
     return vars(args)
@@ -32,21 +33,40 @@ def get_path():
 
 
 def read_pcap(path):
-    # TODO handle IOError
-    f = open(path, 'rb')
-    src = pcap.Reader(f)
     data = []
 
-    for index, [ts, buf] in enumerate(src):
-        # List of dictionaries
-        data.append({
-            'index': index + 1,  # to correlate with Wireshark indexing
-            'ts': ts,
-            'buf': buf
-        })
+    try:
+        with open(path, 'rb') as f:
+            src = pcap.Reader(f)
 
-    f.close()
-    return data
+            for index, [ts, buf] in enumerate(src):
+                # List of dictionaries
+                data.append({
+                    'index': index + 1,  # to correlate with Wireshark indexing
+                    'ts': ts,
+                    'buf': buf
+                })
+
+            f.close()
+            return data
+
+    except IOError:
+        print('Unable to read file')
+        exit(1)
+
+
+def get_setup(src):
+    # yaml_src: $PATH/pcap_analyzer/src/analyse.yaml
+    try:
+        with open(src, 'r') as stream:
+            const = yaml.safe_load(stream)
+
+            stream.close()
+            return const
+
+    except IOError:
+        print('Unable to read file')
+        exit(1)
 
 
 def petit_print(buffer):
@@ -59,17 +79,3 @@ def petit_print(buffer):
         else:
             print(' ', end='')
     print()
-
-
-def get_setup(src):
-    # yaml_src: $PATH/pcap_analyzer/src/analyse.yaml
-    try:
-        with open(src, 'r') as stream:
-            const = yaml.safe_load(stream)
-
-    except IOError:
-        print('Unable to read file')
-        exit(1)
-
-    stream.close()
-    return const
