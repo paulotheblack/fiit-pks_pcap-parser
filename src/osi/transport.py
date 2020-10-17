@@ -106,7 +106,7 @@ class UDP:
         return c.CYAN + self.name + c.END + '\n'\
             + '\t' + 'src_Port: ' + c.GREEN + str(self.src_port) + c.END + '\n'\
             + '\t' + 'dst_Port: ' + c.GREEN + str(self.dest_port) + c.END + '\n'\
-            + '\t' + 'Length: ' + str(self.len) + '\n'\
+            + '\t' + 'Length: ' + str(self.len) + ' B\n'\
             + '\t' + 'Data type: ' + c.PURPLE + str(self.data_type) + c.END
 
     # TODO ports are stored as int values ... no-conversion pls

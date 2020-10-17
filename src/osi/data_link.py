@@ -48,6 +48,7 @@ class Frame:
         self.dest_mac, self.src_mac, self.net_protocol = unpack('! 6s 6s H', self.buffer[:14])
 
         if self.net_protocol < 512:
+            self.frame_type = 'IEEE Std 802.3 LLC'
             self.get_8023_type()
         else:
             self.frame_type = 'Ethernet II'
@@ -64,15 +65,27 @@ class Frame:
                 else:
                     self.net_protocol = c.RED + et['name'] + c.END
 
-    def get_8023_type(self):  # TODO
-        ff = unpack('! B', self.buffer[14:15])
-        std_type = '{:0x}'.format(ff[0]).upper()
+    def get_8023_type(self):
+        sap = unpack('! c', self.buffer[14:15])
+        sap = sap[0].hex().upper()
 
-        for std in self.consts['STD']:
-            if std['addr'] == std_type:
-                self.frame_type = std['name']
-                self.net_protocol = c.CYAN + std['net'] + c.END
-                # If SNAP --> get_ethertype of SNAP
-            else:
-                self.frame_type = 'IEEE Std 802.3 LLC'
-                self.net_protocol = c.CYAN + 'IDK' + c.END
+        for std in self.consts['SAP']:
+            if sap == std['addr']:
+                sap = std['name']
+                self.frame_type = self.frame_type + ' + ' + c.RED + std['name'] + c.END
+                self.net_protocol = c.RED + 'Unknown' + c.END
+
+                if sap == 'IPXX':
+                    self.frame_type = 'IEEE Std 802.3 RAW'
+                    self.net_protocol = c.RED + 'IPXX' + c.END
+
+                # Search for nested SNAP Ethertype
+                if sap == 'SNAP':
+                    # SNAP Header
+                    vendor_code, ethertype = unpack('! 3s H', self.buffer[17:22])
+
+                    for et in self.consts['Ethertype']:
+                        if ethertype == et['addr']:
+                            self.net_protocol = c.RED + et['name'] + c.END
+                        else:
+                            self.net_protocol = c.RED + 'Nested Ethertype ' + str(ethertype) + c.END

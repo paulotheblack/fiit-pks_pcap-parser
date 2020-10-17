@@ -15,17 +15,51 @@ Ethertype:
   - name: Loopback
     addr: 0x9000
 
-STD:
-  - name: STP
-    addr: 0x42
+SAP:
+  - name: Null SAP
+    addr: 00
 
-  - name: IEEE Std 802.3 LLC
+  - name: LLC Sublayer Manag-I
+    addr: 02
+
+  - name: LLC Sublayer Manag-G
+    addr: 03
+
+  - name: IP DoD
+    addr: 06
+
+  - name: PROWAY Net Manag
+    addr: 0E
+
+  - name: BPDU (802.1 Spanning Tree)
+    addr: 42
+
+  - name: MMS
+    addr: 4E
+
+  - name: ISI IP
+    addr: 5E
+
+  - name: X.25 PLP
+    addr: 7E
+
+  - name: PROWAY
+    addr: 8E
+
+  - name: SNAP
     addr: AA
-    net: SNAP
 
-  - name: IEEE Std 802.3 RAW
+  - name: IPX(Novell NetWare)
+    addr: E0
+
+  - name: LAN Manag
+    addr: F4
+
+  - name: ISO Network Layer Protocols
+    addr: FE
+
+  - name: IPXX
     addr: FF
-    net: IPXX
 
 IP:
   - name: ICMP

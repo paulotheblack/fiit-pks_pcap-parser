@@ -52,7 +52,7 @@ class IPv4:
         if self.options is not None:
             return 'Type: ' + str(self.opt_type) + '\n'\
                 + '\t' + 'Options Length: ' + str(self.opt_len) + '\n'\
-                + '\t' + 'Info: ' + str(self.opt_info)
+                + '\t' + 'Info: ' + str(self.opt_info.hex().upper())
         else:
             return 'Nan'
 
@@ -81,14 +81,14 @@ class IPv4:
             if ip['addr_dec'] == self.trans_protocol:
                 if ip['name'] == 'ICMP':
                     self.trans_protocol = ICMP(self.buffer[self.header_len:], self.consts)
-                elif ip['name'] == 'IGMP':
-                    self.trans_protocol = IGMP()
+                # elif ip['name'] == 'IGMP':
+                #     self.trans_protocol = IGMP()
                 elif ip['name'] == 'TCP':
                     self.trans_protocol = TCP(self.buffer[self.header_len:], self.consts)
                 elif ip['name'] == 'UDP':
                     self.trans_protocol = UDP(self.buffer[self.header_len:], self.consts)
                 else:
-                    self.trans_protocol = 'Unknown: ' + str(self.trans_protocol)
+                    self.trans_protocol = c.RED + ip['name'] + c.END
 
 
 class ARP:
