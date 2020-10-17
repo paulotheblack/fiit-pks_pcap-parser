@@ -35,8 +35,8 @@ class Frame:
         return c.RED + '\n# ------------ #\n' + '   Frame: ' + str(self.index) + '\n' \
                + '# ------------ #' + c.END + '\n' \
                + 'Timestamp: ' + self.timestamp + '\n' \
-               + 'PCAP API Length: ' + str(self.api_len) + 'B\n' \
-               + 'Physical Length: ' + str(self.phys_len) + 'B\n' \
+               + 'PCAP API Length: ' + str(self.api_len) + ' B\n' \
+               + 'Physical Length: ' + str(self.phys_len) + ' B\n' \
                + 'DLL Protocol: ' + c.CYAN + self.frame_type + c.END + '\n' \
                + '\t' + 'dst_MAC: ' + c.GREEN + mac_format(self.dest_mac) + c.END + '\n' \
                + '\t' + 'src_MAC: ' + c.GREEN + mac_format(self.src_mac) + c.END + '\n' \
@@ -60,7 +60,7 @@ class Frame:
 
     def get_ether_type(self):
         # search for protocol
-        for et in self.consts['ethertype']:
+        for et in self.consts['Ethertype']:
             if et['addr'] == self.net_protocol:
                 if et['name'] == 'IPv4':
                     self.net_protocol = IPv4(self.buffer[14:], self.consts)
@@ -75,11 +75,11 @@ class Frame:
                     self.net_protocol = 'Please process: ' + str(self.net_protocol)
 
     def get_8023_type(self):
-        fff = unpack('! B', self.buffer[14:15])
-        type = '{:0x}'.format(fff[0]).upper()
+        ff = unpack('! B', self.buffer[14:15])
+        std_type = '{:0x}'.format(ff[0]).upper()
 
-        for std in self.consts['std']:
-            if std['addr'] == type:
+        for std in self.consts['STD']:
+            if std['addr'] == std_type:
                 self.frame_type = std['name']
                 self.net_protocol = c.CYAN + std['net'] + c.END
             else:

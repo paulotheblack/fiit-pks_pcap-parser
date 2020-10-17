@@ -1,5 +1,5 @@
 ---
-ethertype:
+Ethertype:
   - name: IPv4
     addr: 0x0800
 
@@ -12,7 +12,7 @@ ethertype:
   - name: Loopback
     addr: 0x9000
 
-std:
+STD:
   - name: STP
     addr: 0x42
 
@@ -24,7 +24,7 @@ std:
     addr: FF
     net: IPXX
 
-ip:
+IP:
   - name: ICMP
     addr: 0x01
     addr_dec: 1
@@ -41,7 +41,56 @@ ip:
     name: UDP
     addr_dec: 17
 
-tcp:
+ICMP:
+  - type: 0
+    name: Echo Reply
+
+  - type: 3
+    name: Destination Unreachable
+
+  - type: 4
+    name: Source Quench
+
+  - type: 5
+    name: Redirect
+
+  - type: 8
+    name: Echo
+
+  - type: 9
+    name: Router Advertisement
+
+  - type: 10
+    name: Router Selection
+
+  - type: 11
+    name: Time Exceeded
+
+  - type: 12
+    name: Paramenter Problem
+
+  - type: 13
+    name: Timestamp
+
+  - type: 14
+    name: Timestamp Reply
+
+  - type: 15
+    name: Information Request
+
+  - type: 16
+    name: Information Reply
+
+  - type: 17
+    name: Address Mask Request
+
+  - type: 18
+    name: Address Mask Reply
+
+  - type: 30
+    name: Traceroute
+
+TCP:
   - name: SSH
     port: 22
 
@@ -54,13 +103,13 @@ tcp:
   - name: TELNET
     port: 23
 
-  - name: FTP-DATA
+  - name: FTP Data
     port: 20
 
-  - name: FTP-CONTROL
+  - name: FTP Control
     port: 21
 
-udp:
+UDP:
   - name: DNS
     port: 53
 

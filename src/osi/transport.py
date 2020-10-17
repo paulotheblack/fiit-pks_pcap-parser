@@ -7,11 +7,30 @@ from src.color import Color as c
 class ICMP:
     name = 'ICMP'
 
+    def __init__(self, buffer, consts):
+        self.buffer = buffer
+        self.consts = consts
+
+        self.type = None
+        self.code = None
+        self.details = None
+
+        self.parse()
+
     # [  1  ][  1 ][     2   ][              4            ]
     # [type][code][checksum][ other message-specific-info ]
     def __repr__(self):
         return c.CYAN + self.name + c.END + '\n'\
-            + c.YELLOW + '--> TODO' + c.END
+            + '\t' + 'Type: ' + str(self.type) + '\n'\
+            + '\t' + 'Code: ' + str(self.code) + '\n'\
+            + '\t' + 'Details: ' + c.PURPLE + str(self.details) + c.END
+
+    def parse(self):
+        self.type, self.code = unpack('! B B', self.buffer[:2])
+
+        for icmp_type in self.consts['ICMP']:
+            if icmp_type['type'] == self.type:
+                self.details = icmp_type['name']
 
 
 class IGMP:
@@ -26,11 +45,6 @@ class TCP:
 
     name = 'TCP'
 
-    # ports to analyze:
-    # 80 == HTTP data
-    # 443 == HTTPs data
-    # 21 == FTP
-    # 22 == SSH
     def __init__(self, buffer, consts):
         self.buffer = buffer
         self.consts = consts
@@ -44,7 +58,6 @@ class TCP:
         self.data_type = None
         # TODO implement Flags
 
-
         self.parse()
 
     def __repr__(self):
@@ -54,7 +67,7 @@ class TCP:
             + '\t' + 'Seq No.: ' + str(self.seq_num) + '\n'\
             + '\t' + 'ACK No.: ' + str(self.ack_num) + '\n'\
             + '\t' + 'Flags: ' + str(self.flags) + '\n'\
-            + '\t' + 'Data type: ' + c.CYAN + str(self.data_type) + c.END
+            + 'Data type: ' + c.PURPLE + str(self.data_type) + c.END
 
     def parse(self):
         self.src_port, self.dest_port, self.seq_num, self.ack_num, self.flags\
@@ -63,14 +76,14 @@ class TCP:
         self.get_data_type()
 
     def get_data_type(self):
-        for prtcl in self.consts['tcp']:
+        for prtcl in self.consts['TCP']:
             if prtcl['port'] == self.src_port:
                 self.data_type = prtcl['name']
 
             elif prtcl['port'] == self.dest_port:
                 self.data_type = prtcl['name']
 
-            elif prtcl['port'] is not self.src_port or self.dest_port:
+            if self.data_type is None:
                 self.data_type = 'Unknown'
 
 
@@ -96,7 +109,7 @@ class UDP:
             + '\t' + 'src_Port: ' + c.GREEN + str(self.src_port) + c.END + '\n'\
             + '\t' + 'dst_Port: ' + c.GREEN + str(self.dest_port) + c.END + '\n'\
             + '\t' + 'Length: ' + str(self.len) + '\n'\
-            + '\t' + 'Data type: ' + c.CYAN + str(self.data_type) + c.END
+            + '\t' + 'Data type: ' + c.PURPLE + str(self.data_type) + c.END
 
     # TODO ports are stored as int values ... no-conversion pls
     def parse(self):
@@ -104,12 +117,12 @@ class UDP:
         self.get_data_type()
 
     def get_data_type(self):
-        for prtcl in self.consts['udp']:
+        for prtcl in self.consts['UDP']:
             if prtcl['port'] == self.src_port:
                 self.data_type = prtcl['name']
 
             elif prtcl['port'] == self.dest_port:
                 self.data_type = prtcl['name']
 
-            elif prtcl['port'] is not self.src_port or self.dest_port:
+            if self.data_type is None:
                 self.data_type = 'Unknown'

@@ -72,10 +72,10 @@ class IPv4:
         self.get_prtcl()
 
     def get_prtcl(self):
-        for ip in self.consts['ip']:
+        for ip in self.consts['IP']:
             if ip['addr_dec'] == self.trans_protocol:
                 if ip['name'] == 'ICMP':
-                    self.trans_protocol = ICMP()
+                    self.trans_protocol = ICMP(self.buffer[self.header_len:], self.consts)
                 elif ip['name'] == 'IGMP':
                     self.trans_protocol = IGMP()
                 elif ip['name'] == 'TCP':
