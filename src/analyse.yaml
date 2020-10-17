@@ -37,8 +37,8 @@ IP:
     addr: 0x06
     addr_dec: 6
 
-  - addr: 0x11
-    name: UDP
+  - name: UDP
+    addr: 0x11
     addr_dec: 17
 
 ICMP:

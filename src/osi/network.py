@@ -3,6 +3,11 @@
 from .transport import *
 
 
+def mac_format(mac):
+    mac_str = map('{:02x}'.format, mac)
+    return ':'.join(mac_str).upper()
+
+
 def ipv4_format(raw):
     return '.'.join(map(str, raw))
 
@@ -35,8 +40,8 @@ class IPv4:
 
     def __repr__(self):
         return c.CYAN + self.name + c.END + '\n' \
-               + '\t' + 'Header Length: ' + str(self.header_len) + 'B\n' \
-               + '\t' + 'Total Length: ' + str(self.total_len) + 'B\n' \
+               + '\t' + 'Header Length: ' + str(self.header_len) + ' B\n' \
+               + '\t' + 'Total Length: ' + str(self.total_len) + ' B\n' \
                + '\t' + 'TTL: ' + str(self.ttl) + '\n' \
                + '\t' + 'src_IP: ' + c.GREEN + ipv4_format(self.src_ip) + c.END + '\n' \
                + '\t' + 'dst_IP: ' + c.GREEN + ipv4_format(self.dest_ip) + c.END + '\n' \
@@ -85,12 +90,60 @@ class IPv4:
                 else:
                     self.trans_protocol = 'Unknown: ' + str(self.trans_protocol)
 
-# TODO -> <- communication:: TASK 4
+
 class ARP:
     name = 'ARP'
 
+    def __init__(self, buffer, consts):
+        self.buffer = buffer
+        self.consts = consts
+
+        self.htype = None  # Hardware Type (2)
+        self.ptype = None  # Protocol Type (2)
+        self.hlen = None  # Hardware address length (1)
+        self.plen = None  # Protocol address length (1)
+        self.oper = None  # Operation (2)
+        self.type = None  # Operation message 1 == Request ; 2 == Reply
+        self.sha = None  # Src/ Sender hardware address (6) [MAC]
+        self.spa = None  # Src/ Sender protocol address (4) [IP]
+        self.tha = None  # Dest/ Target hardware address (6) [MAC]
+        self.tpa = None  # Dest/ Target protocol address (4) [IP]
+
+        self.parse()
+
     def __repr__(self):
-        return c.CYAN + self.name + c.END + '\n'
+        return c.CYAN + self.name + c.END + '\n'\
+            + '\t' + 'Hardware Type: ' + str(self.htype) + '\n'\
+            + '\t' + 'Protocol Type: ' + str(self.ptype) + '\n'\
+            + '\t' + 'Hardware Address Len: ' + str(self.hlen) + '\n'\
+            + '\t' + 'Protocol Address Len: ' + str(self.plen) + '\n'\
+            + '\t' + 'Operation: ' + c.PURPLE + str(self.oper) + c.END + '\n'\
+            + '\t' + 'OP Type: ' + c.PURPLE + str(self.type) + c.END + '\n'\
+            + '\t' + 'Sender MAC: ' + c.GREEN + mac_format(self.sha) + c.END + '\n'\
+            + '\t' + 'Sender IP:  ' + c.GREEN + ipv4_format(self.spa) + c.END + '\n'\
+            + '\t' + 'Target MAC: ' + c.GREEN + mac_format(self.tha) + c.END + '\n'\
+            + '\t' + 'Target IP:  ' + c.GREEN + ipv4_format(self.tpa) + c.END
+
+    def parse(self):
+        self.htype, self.ptype, self.hlen, self.plen, self.oper,\
+            self.sha, self.spa, self.tha, self.tpa\
+            = unpack('!H H B B H 6s 4s 6s 4s', self.buffer[:28])
+
+        # HTYPE
+        if self.htype == 1:
+            self.htype = c.PURPLE + 'Ethernet (1)' + c.END
+
+        # PROTOCOL TYPE
+        if self.ptype == 2048:
+            self.ptype = c.PURPLE + 'IPv4' + c.END
+
+        # OPERATION CODE
+        if self.oper == 1:
+            self.type = 'Request'
+        elif self.oper == 2:
+            self.type = 'Reply'
+        else:
+            self.type = 'Unknown'
 
 
 class Loopback:

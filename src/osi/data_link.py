@@ -8,11 +8,6 @@ def get_epoch(ts):
     return datetime.utcfromtimestamp(ts).strftime('%d-%m-%Y %H:%M:%S.%f')[:-3] + ' UTC'
 
 
-def mac_format(mac):
-    mac_str = map('{:02x}'.format, mac)
-    return ':'.join(mac_str).upper()
-
-
 class Frame:
 
     def __init__(self, index, ts, buffer, consts):
@@ -65,7 +60,7 @@ class Frame:
                 if et['name'] == 'IPv4':
                     self.net_protocol = IPv4(self.buffer[14:], self.consts)
                 elif et['name'] == 'ARP':
-                    self.net_protocol = ARP()
+                    self.net_protocol = ARP(self.buffer[14:], self.consts)
                 elif et['name'] == 'IPv6':
                     self.net_protocol = et['name']  # TODO IPv6 Processing
                 elif et['name'] == 'Loopback':

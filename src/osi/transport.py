@@ -17,8 +17,6 @@ class ICMP:
 
         self.parse()
 
-    # [  1  ][  1 ][     2   ][              4            ]
-    # [type][code][checksum][ other message-specific-info ]
     def __repr__(self):
         return c.CYAN + self.name + c.END + '\n'\
             + '\t' + 'Type: ' + str(self.type) + '\n'\
