@@ -1,0 +1,58 @@
+---
+ethertype:
+  - name: IPv4
+    addr: 0x0800
+
+  - name: ARP
+    addr: 0x0806
+
+  - name: IPv6
+    addr: 0x86DD
+
+  - name: Loopback
+    addr: 0x9000
+
+lsap:
+  - name: STP
+    addr: 0x42
+
+  - name: SNAP
+    addr: 0xaa
+
+  - name: IPX
+    addr: 0xe0
+
+ip:
+  - name: ICMP
+    addr: 0x01
+    addr_dec: 1
+
+  - name: IGMP
+    addr: 0x02
+    addr_dec: 2
+
+  - name: TCP
+    addr: 0x06
+    addr_dec: 6
+
+  - addr: 0x11
+    name: UDP
+    addr_dec: 17
+
+tcp:
+  - name: SSH
+    addr: 0x0015
+    addr_dec: 22
+
+  - name: HTTP
+    addr: 0x0050
+    addr_dec: 80
+
+udp:
+  - name: DNS
+    addr: 0x0035
+    addr_dec: 53
+
+  - name: TFTP
+    addr: 0x0045
+    addr_dec: 69

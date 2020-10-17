@@ -31,7 +31,10 @@ class TCP:
     # 443 == HTTPs data
     # 21 == FTP
     # 22 == SSH
-    def __init__(self, buffer):
+    def __init__(self, buffer, consts):
+        self.buffer = buffer
+        self.consts = consts
+
         self.src_port = None
         self.dest_port = None
         self.seq_num = None
@@ -39,7 +42,7 @@ class TCP:
         self.data_off = None
         self.flags = None
         # TODO implement Flags
-        self.buffer = buffer
+
 
         self.parse()
 
@@ -62,11 +65,13 @@ class UDP:
     name = 'UDP'
 
     # ports to analyze:
-    def __init__(self, buffer):
+    def __init__(self, buffer, consts):
+        self.buffer = buffer
+        self.consts = consts
+
         self.src_port = None
         self.dest_port = None
         self.len = None  # means header + payload
-        self.buffer = buffer
         self.payload = None
 
         self.parse()

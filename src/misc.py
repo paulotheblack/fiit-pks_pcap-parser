@@ -1,19 +1,19 @@
 from dpkt import pcap
 import textwrap
 import argparse
+import yaml
 
 
 def parse_args():
-
     ap = argparse.ArgumentParser(
         prog='PROG',
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description=textwrap.dedent('''\
             # ----------------------------------------------- #
             #   PCAP Analyzer, PKS assigment 1. v0.1          #
-            #       Author: Michal Paulovic                   #
-            #       STU-FIIT: xpaulovicm1                     #
-            #       Github: paulotheblack                     #
+            #       Author:     Michal Paulovic               #
+            #       STU-FIIT:   xpaulovicm1                   #
+            #       Github:     paulotheblack                 #
             #   https://github.com/paulotheblack/pcap_parser  #
             # ----------------------------------------------- #
         '''))
@@ -31,8 +31,8 @@ def get_path():
     return path
 
 
-# TODO change ...
 def read_pcap(path):
+    # TODO handle IOError
     f = open(path, 'rb')
     src = pcap.Reader(f)
     data = []
@@ -59,3 +59,17 @@ def petit_print(buffer):
         else:
             print(' ', end='')
     print()
+
+
+def get_setup(src):
+    # yaml_src: $PATH/pcap_analyzer/src/analyse.yaml
+    try:
+        with open(src, 'r') as stream:
+            const = yaml.safe_load(stream)
+
+    except IOError:
+        print('Unable to read file')
+        exit(1)
+
+    stream.close()
+    return const

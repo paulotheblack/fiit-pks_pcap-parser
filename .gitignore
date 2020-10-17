@@ -2,6 +2,8 @@ doc/misc/*
 pcap_src/*
 scratchpad
 stdout_test
+stdout_test.txt
+01_task-1_complete/*
 
 venv/*
 src/__pycache__/*

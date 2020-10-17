@@ -13,8 +13,9 @@ class IPv4:
     """
     name = 'IPv4'
 
-    def __init__(self, buffer):
+    def __init__(self, buffer, consts):
         self.buffer = buffer
+        self.consts = consts
 
         self.version = None
         self.header_len = None
@@ -34,8 +35,8 @@ class IPv4:
 
     def __repr__(self):
         return c.CYAN + self.name + c.END + '\n' \
-               + '\t' + 'Header Length: ' + str(self.header_len) + '\n' \
-               + '\t' + 'Total Length: ' + str(self.total_len) + '\n' \
+               + '\t' + 'Header Length: ' + str(self.header_len) + 'B\n' \
+               + '\t' + 'Total Length: ' + str(self.total_len) + 'B\n' \
                + '\t' + 'TTL: ' + str(self.ttl) + '\n' \
                + '\t' + 'src_IP: ' + c.GREEN + ipv4_format(self.src_ip) + c.END + '\n' \
                + '\t' + 'dst_IP: ' + c.GREEN + ipv4_format(self.dest_ip) + c.END + '\n' \
@@ -63,7 +64,7 @@ class IPv4:
 
             self.opt_type = self.options[0]
             self.opt_len = self.options[1]
-            self.opt_info = self.options[2:].hex().upper()
+            self.opt_info = self.options[2:]
         else:
             self.total_len, self.ttl, self.trans_protocol, self.src_ip, self.dest_ip = \
                 unpack(self.header_struct, self.buffer[:self.header_len])
@@ -71,36 +72,18 @@ class IPv4:
         self.get_prtcl()
 
     def get_prtcl(self):
-        if self.trans_protocol == 1:  # ICMP
-            self.trans_protocol = ICMP()
-        elif self.trans_protocol == 2:  # IGMP
-            self.trans_protocol = IGMP()
-        elif self.trans_protocol == 6:  # TCP
-            self.trans_protocol = TCP(self.buffer[self.header_len:])
-
-        # elif self.protocol == 9:  # IGRP
-        #     self.protocol = 'IGRP'
-
-        elif self.trans_protocol == 17:  # UDP
-            self.trans_protocol = UDP(self.buffer[self.header_len:])
-
-        # elif self.protocol == 47:  # GRE
-        #     self.protocol = 'GRE'
-        # elif self.protocol == 50:  # ESP
-        #     self.protocol = 'ESP'
-        # elif self.protocol == 51:  # AH
-        #     self.protocol = 'AH'
-        # elif self.protocol == 57:  # AH
-        #     self.protocol = 'SKIP'
-        # elif self.protocol == 88:  # EIGRP
-        #     self.protocol = 'EIGRP'
-        # elif self.protocol == 89:  # OSPF
-        #     self.protocol = 'OSPF'
-        # elif self.protocol == 115:  # L2TP
-        #     self.protocol = 'L2TP'
-        else:
-            self.trans_protocol = 'Unknown'
-
+        for ip in self.consts['ip']:
+            if ip['addr_dec'] == self.trans_protocol:
+                if ip['name'] == 'ICMP':
+                    self.trans_protocol = ICMP()
+                elif ip['name'] == 'IGMP':
+                    self.trans_protocol = IGMP()
+                elif ip['name'] == 'TCP':
+                    self.trans_protocol = TCP(self.buffer[self.header_len:], self.consts)
+                elif ip['name'] == 'UDP':
+                    self.trans_protocol = UDP(self.buffer[self.header_len:])
+                else:
+                    self.trans_protocol = 'Unknown: ' + str(self.trans_protocol)
 
 # TODO -> <- communication:: TASK 4
 class ARP:
