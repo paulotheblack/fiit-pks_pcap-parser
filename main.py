@@ -2,7 +2,7 @@ from src.misc import *
 from src.osi.data_link import Frame
 from src.color import Color
 import sys
-from src.analytics import ip_analytics
+from src.analytics import *
 
 
 
@@ -34,13 +34,19 @@ if __name__ == '__main__':
         print(dump[i])
         petit_print(dump[i].buffer)
 
+
+    # Analytics file output
+    ff = open('analytics-results.txt', 'w')
+    sys.stdout = ff
+    Color.disabled()
+
+    # analytics
     ip_analytics(dump)
+    icmp_analytics(dump)
 
     if args['o'] == 'f':
         f.close()
         sys.stdout = sys.__stdout__
 
-
-# -------------------------------------------------------- #
 
 

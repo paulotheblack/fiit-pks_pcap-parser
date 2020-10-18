@@ -92,7 +92,7 @@ ICMP:
     name: Redirect
 
   - type: 8
-    name: Echo
+    name: Echo Request
 
   - type: 9
     name: Router Advertisement
