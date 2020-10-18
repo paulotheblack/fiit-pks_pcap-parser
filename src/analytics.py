@@ -76,6 +76,13 @@ def ip_analytics(dump: [data_link.Frame]):
 def icmp_analytics(dump: [data_link.Frame]):
 
     coms = []  # [{'req' : Frame , 'reply': Frame}]
+    add = True
+
+    # stdout: src results
+    print(c.PURPLE + '''
+# ------------------------------------- #
+#            ICMP Analytics             #
+# ------------------------------------- #''' + c.END)
 
     for frame in dump:
         if type(frame.net_protocol.trans_protocol) is ICMP:
@@ -85,28 +92,33 @@ def icmp_analytics(dump: [data_link.Frame]):
             icmp = frame.net_protocol.trans_protocol
 
             if icmp.type == 8:  # ECHO REQUEST
-                coms.append({
-                    'req': frame,
-                    'reply': None
-                })
+
+                for entry in coms:
+                    # later request found without reply, update request
+                    if entry['req'].net_protocol.src_ip == src:
+                        entry['req'] = frame
+                        add = False
+
+                if add is True:
+                    coms.append({
+                        'req': frame,
+                        'reply': None
+                    })
+
+            add = True
 
             if icmp.type == 0:  # ECHO REPLY
-                for entry in coms:  # Check all entries in Coms for same destIP as curr srcIP
+                for i, entry in enumerate(coms):  # Check all entries in Coms for same destIP as curr srcIP
                     if entry['req'].net_protocol.dest_ip == src:
                         entry['reply'] = frame
 
-        # stdout: src results
-    print(c.PURPLE + '''
-# ------------------------------------- #
-#            ICMP Analytics             #
-# ------------------------------------- #''' + c.END)
+                        print(c.BOLD + '\t\tECHO REQUEST:' + c.END, end='')
+                        print(entry['req'])
+                        print(c.BOLD + '\t\tECHO REPLY: ' + c.END, end='')
+                        print(entry['reply'],end='')
+                        print('# ------------ EOC ------------ #')
 
-    for i in coms:
-        print(c.BOLD + '\t\tECHO REQUEST: ' + c.END, end='')
-        print(i['req'])
-        print(c.BOLD + '\t\tECHO REPLY: ' + c.END, end='')
-        print(i['reply'])
-        print('# ----------------------------------------- #')
+                        coms.pop(i)
 
 
 

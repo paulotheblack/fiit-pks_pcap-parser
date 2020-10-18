@@ -36,9 +36,9 @@ if __name__ == '__main__':
 
 
     # Analytics file output
-    ff = open('analytics-results.txt', 'w')
-    sys.stdout = ff
-    Color.disabled()
+    # ff = open('analytics-results.txt', 'w')
+    # sys.stdout = ff
+    # Color.disabled()
 
     # analytics
     ip_analytics(dump)
