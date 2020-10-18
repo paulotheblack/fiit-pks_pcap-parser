@@ -6,7 +6,7 @@ PCAP Reader used
 
     
 ```
-usage: PROG [-h] [-o O] [-i I] [-p P]
+usage: PCAP Analyzer [-h] [-o O] [-i I] [-p P]
 
 # ----------------------------------------------- #
 #   PCAP Analyzer, xxxxxxxxxxxxxxxxxxx v0.1       #
