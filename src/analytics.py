@@ -1,5 +1,5 @@
 from .osi import data_link
-from .osi.network import IPv4, ipv4_format
+from .osi.network import IPv4, ipv4_format, ARP
 from .osi.transport import ICMP
 from src.color import Color as c
 
@@ -131,3 +131,41 @@ def icmp_analytics(dump: [data_link.Frame]):
                             coms.pop(i)
 
     print(f'{c.PURPLE}ICMP Sessions ({session}) {c.END}')
+
+
+def arp_analytics(dump: [data_link.Frame]):
+
+    coms = []
+    session = 0
+
+    # stdout: src results
+    print(c.GREEN + '''
+# ------------------------------------- #
+#             ARP Analytics             #
+# ------------------------------------- #''' + c.END)
+
+    for frame in dump:
+
+        if type(frame.net_protocol) is ARP:
+
+            arp = frame.net_protocol
+
+            if arp.oper == 1:  # REQUEST
+                session += 1
+                coms.append({
+                    'req': frame
+                })
+                print(f'\t{c.PURPLE}# ------ SESSION ({str(session)}) ----- #{c.END}')
+
+            if arp.oper == 2:  # REPLY
+                for i, entry in enumerate(coms):
+                    if entry['req'].net_protocol.spa == arp.tpa:
+                        # entry['reply'] = frame
+                        print(c.BOLD + '--> ARP REQUEST:' + c.END, end='')
+                        print(entry['req'])
+                        print(c.BOLD + '--> ARP REPLY: ' + c.END, end='')
+                        print(frame)
+                        coms.pop()
+
+
+
