@@ -290,14 +290,14 @@ def tcp_analytics(dump: [data_link.Frame]):
         print('\tData Type: ' + str(com[0]['data']))
         print('\tClosed: ' + str(com[0]['full']))
 
-        # if len(com) <= 20:
-        #     for entry in com:
-        #         print(entry['frame'])
-        # else:
-        #     for entry in com[:10]:
-        #         print(entry['frame'])
-        #     for entry in com[l_c - 10:]:
-        #         print(entry['frame'])
+        if len(com) <= 20:
+            for entry in com:
+                 print(entry['frame'])
+        else:
+            for entry in com[:10]:
+                 print(entry['frame'])
+            for entry in com[l_c - 10:]:
+                 print(entry['frame'])
 
     if len(storage) != 0:
         last = len(storage) - 1
