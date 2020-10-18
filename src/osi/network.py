@@ -113,8 +113,8 @@ class ARP:
 
     def __repr__(self):
         return c.CYAN + self.name + c.END + '\n'\
-            + '\t' + 'Hardware Type: ' + str(self.htype) + '\n'\
-            + '\t' + 'Protocol Type: ' + str(self.ptype) + '\n'\
+            + '\t' + 'Hardware Type: ' + c.PURPLE + str(self.htype) + c.END + '\n'\
+            + '\t' + 'Protocol Type: ' + c.PURPLE + str(self.ptype) + c.END + '\n'\
             + '\t' + 'Hardware Address Len: ' + str(self.hlen) + '\n'\
             + '\t' + 'Protocol Address Len: ' + str(self.plen) + '\n'\
             + '\t' + 'Operation: ' + c.PURPLE + str(self.oper) + c.END + '\n'\
@@ -131,11 +131,11 @@ class ARP:
 
         # HTYPE
         if self.htype == 1:
-            self.htype = c.PURPLE + 'Ethernet (1)' + c.END
+            self.htype = 'Ethernet (1)'
 
         # PROTOCOL TYPE
         if self.ptype == 2048:
-            self.ptype = c.PURPLE + 'IPv4' + c.END
+            self.ptype = 'IPv4'
 
         # OPERATION CODE
         if self.oper == 1:

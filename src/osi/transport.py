@@ -60,6 +60,11 @@ class TCP:
         self.data_type = None
         # TODO implement Flags
 
+        self.f_ack = False
+        self.f_rst = False
+        self.f_syn = False
+        self.f_fin = False
+
         self.parse()
 
     def __repr__(self):
@@ -69,12 +74,17 @@ class TCP:
             + '\t' + 'Seq No.: ' + str(self.seq_num) + '\n'\
             + '\t' + 'ACK No.: ' + str(self.ack_num) + '\n'\
             + '\t' + 'Flags: ' + str(self.flags) + '\n'\
+            + '\t\t' + 'ACK: ' + str(self.f_ack) + '\n'\
+            + '\t\t' + 'RST: ' + str(self.f_rst) + '\n'\
+            + '\t\t' + 'SYN: ' + str(self.f_syn) + '\n'\
+            + '\t\t' + 'FIN: ' + str(self.f_fin) + '\n'\
             + 'Data type: ' + c.PURPLE + str(self.data_type) + c.END
 
     def parse(self):
-        self.src_port, self.dest_port, self.seq_num, self.ack_num, self.flags\
-            = unpack('!H H L L H', self.buffer[:14])  # last == off_res_flags
+        self.src_port, self.dest_port, self.seq_num, self.ack_num\
+            = unpack('!H H L L', self.buffer[:12])  # last == off_res_flags
 
+        self.get_flags()
         self.get_data_type()
 
     def get_data_type(self):
@@ -88,6 +98,21 @@ class TCP:
             if self.data_type is None:
                 self.data_type = 'Unknown'
 
+    def get_flags(self):
+        self.flags = unpack('! b', self.buffer[13:14])[0] & 0b00111111
+
+        if (self.flags >> 4) & 1:
+            self.f_ack = True
+
+        if (self.flags >> 2) & 1:
+            self.f_rst = True
+
+        if (self.flags >> 1) & 1:
+            self.f_syn = True
+
+        if self.flags & 1:
+            self.f_fin = True
+
 
 class UDP:
 
@@ -100,7 +125,7 @@ class UDP:
 
         self.src_port = None
         self.dest_port = None
-        self.len = None  # means header + payload
+        self.len = None
         self.payload = None
         self.data_type = None
 
