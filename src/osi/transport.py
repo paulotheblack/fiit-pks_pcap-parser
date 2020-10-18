@@ -13,6 +13,8 @@ class ICMP:
 
         self.type = None
         self.code = None
+        self.identifier = None
+        self.sequence = None
         self.details = None
 
         self.parse()
@@ -21,10 +23,12 @@ class ICMP:
         return c.CYAN + self.name + c.END + '\n'\
             + '\t' + 'Type: ' + str(self.type) + '\n'\
             + '\t' + 'Code: ' + str(self.code) + '\n'\
-            + '\t' + 'Details: ' + c.PURPLE + str(self.details) + c.END
+            + '\t' + 'Details: ' + c.PURPLE + str(self.details) + c.END + '\n'\
+            + '\t' + 'Identifier: ' + str(self.identifier) + '\n'\
+            + '\t' + 'Sequence: ' + str(self.sequence)
 
     def parse(self):
-        self.type, self.code = unpack('! B B', self.buffer[:2])
+        self.type, self.code, self.identifier, self.sequence = unpack('! B B 2x H H', self.buffer[:8])
 
         for icmp_type in self.consts['ICMP']:
             if icmp_type['type'] == self.type:

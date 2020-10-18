@@ -77,6 +77,8 @@ def icmp_analytics(dump: [data_link.Frame]):
 
     coms = []  # [{'req' : Frame , 'reply': Frame}]
     add = True
+    last_id = 0
+    session = 1
 
     # stdout: src results
     print(c.PURPLE + '''
@@ -85,13 +87,19 @@ def icmp_analytics(dump: [data_link.Frame]):
 # ------------------------------------- #''' + c.END)
 
     for frame in dump:
-        if type(frame.net_protocol.trans_protocol) is ICMP:
+
+        if type(frame.net_protocol) is IPv4 and type(frame.net_protocol.trans_protocol) is ICMP:
+            # aux var
             src = frame.net_protocol.src_ip
             dest = frame.net_protocol.dest_ip
-
             icmp = frame.net_protocol.trans_protocol
 
             if icmp.type == 8:  # ECHO REQUEST
+
+                if last_id != icmp.identifier:
+                    last_id = icmp.identifier
+                    print(f'\t# ------ SESSION ({str(session)}) ----- #')
+                    session += 1
 
                 for entry in coms:
                     # later request found without reply, update request
@@ -112,11 +120,10 @@ def icmp_analytics(dump: [data_link.Frame]):
                     if entry['req'].net_protocol.dest_ip == src:
                         entry['reply'] = frame
 
-                        print(c.BOLD + '\t\tECHO REQUEST:' + c.END, end='')
+                        print(c.BOLD + '--> ECHO REQUEST:' + c.END, end='')
                         print(entry['req'])
-                        print(c.BOLD + '\t\tECHO REPLY: ' + c.END, end='')
-                        print(entry['reply'],end='')
-                        print('# ------------ EOC ------------ #')
+                        print(c.BOLD + '--> ECHO REPLY: ' + c.END, end='')
+                        print(entry['reply'])
 
                         coms.pop(i)
 
