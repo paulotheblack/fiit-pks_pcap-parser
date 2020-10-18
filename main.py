@@ -2,6 +2,8 @@ from src.misc import *
 from src.osi.data_link import Frame
 from src.color import Color
 import sys
+from src.analytics import ip_analytics
+
 
 
 if __name__ == '__main__':
@@ -9,7 +11,8 @@ if __name__ == '__main__':
     # TODO add comments whole code
     args = parse_args()
 
-    if args['o'] == 'f':  # output selection
+    # output selection
+    if args['o'] == 'f':
         f = open('stdout_test.txt', 'w')
         sys.stdout = f
         Color.disabled()
@@ -31,12 +34,13 @@ if __name__ == '__main__':
         print(dump[i])
         petit_print(dump[i].buffer)
 
-    # TODO rest of processing.
+    ip_analytics(dump)
 
     if args['o'] == 'f':
         f.close()
         sys.stdout = sys.__stdout__
 
 
+# -------------------------------------------------------- #
 
 
