@@ -12,7 +12,7 @@ if __name__ == '__main__':
 
     # output selection
     if args['o'] == 'f':
-        f = open('stdout_test.txt', 'w')
+        f = open('analyzer-stdout.txt', 'w')
         sys.stdout = f
         Color.disabled()
     else:
