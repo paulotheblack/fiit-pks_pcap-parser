@@ -39,9 +39,10 @@ if __name__ == '__main__':
     # analytics
     # check 'analytics-results.txt'
     ip_analytics(dump)
-    icmp_analytics(dump)
-    arp_analytics(dump)
-    tcp_analytics(dump)
+    # icmp_analytics(dump)
+    # arp_analytics(dump)
+    # tcp_analytics(dump)
+    doimplementacia(dump)
 
     if args['o'] == 'f':
         f.close()

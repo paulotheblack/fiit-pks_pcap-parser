@@ -1,6 +1,6 @@
 from .osi import data_link
 from .osi.network import IPv4, ipv4_format, ARP
-from .osi.transport import ICMP, TCP
+from .osi.transport import ICMP, TCP, UDP
 from src.color import Color as c
 
 
@@ -302,3 +302,26 @@ def tcp_analytics(dump: [data_link.Frame]):
     if len(storage) != 0:
         last = len(storage) - 1
         print(c.CYAN + 'TCP Sessions (' + str(storage[last][0]['session']) + ')' + c.END)
+
+
+def doimplementacia(dump: [data_link.Frame]):
+
+    dns_dump = []
+
+    for frame in dump:
+
+        if type(frame.net_protocol) == IPv4 and type(frame.net_protocol.trans_protocol) == UDP:
+            udp = frame.net_protocol.trans_protocol
+            if udp.data_type == 'DNS':
+                dns_dump.append(frame)
+
+    print(c.RED + '''
+# ------------------------------------- #
+#      Doimplementacia DNS count        #
+# ------------------------------------- #''' + c.END)
+
+    print(f'# ---- DNS COUNT ({len(dns_dump)}) ---- #')
+
+
+    for entry in dns_dump:
+        print(entry)
